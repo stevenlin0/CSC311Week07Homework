@@ -1,103 +1,64 @@
 package org.example.javafxdb_sql_shellcode;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import java.io.IOException;
-import java.util.Scanner;
-import javafx.scene.paint.Color;
-import org.example.javafxdb_sql_shellcode.db.ConnDbOps;
+import javafx.util.Duration;
 
-/**
- * JavaFX App
- */
+import java.io.IOException;
+
 public class App extends Application {
 
-    private static Scene scene;
-    private static ConnDbOps cdbop;
+    private static Stage primaryStage;
 
+    // Starts the app and shows the splash screen first.
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("primary"), 640, 480);
-        stage.setScene(scene);
-        stage.show();
+        primaryStage = stage;
+        showSplashScreen();
     }
 
-    static void setRoot(String fxml) throws IOException {
-        scene.setRoot(loadFXML(fxml));
-    }
+    // This method shows the splash screen and then switches to the main app after a delay.
+    private void showSplashScreen() throws IOException {
+        Scene splashScene = new Scene(loadFXML("splash").load(), 600, 400); // This loads the splash screen layout.
+        primaryStage.setScene(splashScene);  // This sets the splash screen as the current view.
+        primaryStage.show();  // This displays the splash screen.
 
-    private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-
-        return fxmlLoader.load();
-    }
-
-    public static void main(String[] args) {
-        cdbop = new ConnDbOps();
-        Scanner scan = new Scanner(System.in);
-
-        char input;
-        do {
-            System.out.println(" ");
-            System.out.println("============== Menu ==============");
-            System.out.println("| To start GUI,           press 'g' |");
-            System.out.println("| To connect to DB,       press 'c' |");
-            System.out.println("| To display all users,   press 'a' |");
-            System.out.println("| To insert to the DB,    press 'i' |");
-            System.out.println("| To query by name,       press 'q' |");
-            System.out.println("| To exit,                press 'e' |");
-            System.out.println("===================================");
-            System.out.print("Enter your choice: ");
-            input = scan.next().charAt(0);
-
-            switch (input) {
-                case 'g':
-                     launch(args); //GUI
-                    break;
-
-                case 'c':
-                    cdbop.connectToDatabase(); //Your existing method
-                    break;
-                case 'a':
-                    cdbop.listAllUsers(); //all users in DB
-                    break;
-
-                case 'i':
-                    System.out.print("Enter Name: ");
-                    String name = scan.next();
-                    System.out.print("Enter Email: ");
-                    String email = scan.next();
-                    System.out.print("Enter Phone: ");
-                    String phone = scan.next();
-                    System.out.print("Enter Address: ");
-                    String address = scan.next();
-                    System.out.print("Enter Password: ");
-                    String password = scan.next();
-                    cdbop.insertUser(name, email, phone, address, password); //Your insertUser method
-                    break;
-                case 'q':
-                    System.out.print("Enter the name to query: ");
-                    String queryName = scan.next();
-                    cdbop.queryUserByName(queryName); //Your queryUserByName method
-                    break;
-                case 'e':
-                    System.out.println("Exiting...");
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
+        // This is to wait for 3 seconds before switching to the main app.
+        PauseTransition delay = new PauseTransition(Duration.seconds(3));
+        delay.setOnFinished(event -> {
+            try {
+                showMainApp();  // This is to switch to the main app after the delay.
+            } catch (IOException e) {
+                e.printStackTrace();  // This is to print the error if loading the main app fails.
             }
-            System.out.println(" ");
-        } while (input != 'e');
-
-        scan.close();
-
-       
+        });
+        delay.play();  // This is to start the delay timer.
     }
 
+    // This method shows the main application screen.
+    private void showMainApp() throws IOException {
+        Scene mainScene = new Scene(loadFXML("primary").load(), 600, 400); // This loads the main app layout.
+        primaryStage.setScene(mainScene);  // This sets the main app view as the current view.
+        primaryStage.setTitle("My Application");  // This sets the window title.
+        primaryStage.show();  // This displays the main app.
+    }
 
+    // This method loads an FXML file based on its name.
+    public static FXMLLoader loadFXML(String fxml) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/org/example/javafxdb_sql_shellcode/" + fxml + ".fxml"));
+        return fxmlLoader;  // This is to return the loader for the requested FXML file.
+    }
 
+    // This method switches the current view to a new FXML layout.
+    public static void setRoot(String fxml) throws IOException {
+        primaryStage.getScene().setRoot(loadFXML(fxml).load());  // This is to set a new layout as the current scene.
+    }
 
+    // This is the main method that launches the JavaFX application.
+    public static void main(String[] args) {
+        launch();  // Start the JavaFX application.
+    }
 }

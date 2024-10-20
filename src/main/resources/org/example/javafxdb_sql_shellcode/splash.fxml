@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javafxdb_sql_shellcode.SplashController">
+    <children>
+        <ImageView fx:id="splashImage" fitHeight="200.0" fitWidth="200.0" />
+        <Label text="Welcome to My Application" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+    </children>
+</VBox>
